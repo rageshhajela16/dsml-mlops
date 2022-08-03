@@ -1,12 +1,14 @@
 import pickle
 import flask
+import json
 
 from flask import Flask, request, jsonify
 
 
 ## loading the model
-model_pickle = open("./question_answer.pkl", 'rb')
-model = pickle.load(model_pickle)
+#model_pickle = open("./question_answer.pkl", 'rb')
+#model = pickle.load(model_pickle)
+model = pipeline("question-answering")
 
 app = Flask(__name__)
 
