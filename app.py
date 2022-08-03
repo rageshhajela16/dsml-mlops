@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify
 ## loading the model
 #model_pickle = open("./question_answer.pkl", 'rb')
 #model = pickle.load(model_pickle)
+from transformers import pipeline
 model = pipeline("question-answering")
 
 app = Flask(__name__)
