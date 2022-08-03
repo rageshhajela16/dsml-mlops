@@ -38,7 +38,7 @@ def prediction():
     context = read_text_file(json.loads(request.data)["policy_fname"])
 
     # Making predictions
-    result = jsonify(model(question=query, context=text))
+    result = jsonify(model(question=query, context=context))
     return result
 
 
