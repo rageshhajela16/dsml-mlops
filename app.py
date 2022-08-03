@@ -5,7 +5,7 @@ from flask import Flask, request, Response, jsonify
 
 
 ## loading the model
-model_pickle = open("./artefacts/classifier.pkl", 'rb')
+model_pickle = open("./classifier.pkl", 'rb')
 clf = pickle.load(model_pickle)
 
 app = Flask(__name__)
