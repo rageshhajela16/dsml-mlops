@@ -1,0 +1,5 @@
+flask
+transformers
+tensorflow
+keras
+protobuf==3.20.*
