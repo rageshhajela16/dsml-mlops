@@ -1,45 +1,55 @@
 import pickle
 import flask
-import json
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response, jsonify
 
 
 ## loading the model
-#model_pickle = open("./question_answer.pkl", 'rb')
-#model = pickle.load(model_pickle)
-from transformers import pipeline
-model = pipeline("question-answering")
+model_pickle = open("./classifier.pkl", 'rb')
+clf = pickle.load(model_pickle)
 
 app = Flask(__name__)
-
-
-# helper function to read a text file
-def read_text_file(fname):
-    with open(fname) as f:
-        text = "".join(f.readlines()).replace("\n", " ")
-    return text
 
 
 # defining the function which will make the prediction using the data which the user inputs 
 @app.route('/predict', methods = ['POST'])
 def prediction():
-    """
-    Sample Input Json - 
-    {
-        "query": "What is the minimum period of hospitalization?",
-        "policy_fname": "max_bupa_health_recharge.txt"
+    # Pre-processing user input
+    loan_req = request.get_json()
+    print(loan_req) 
+
+    if loan_req['Gender'] == "Male":
+        Gender = 0
+    else:
+        Gender = 1
+ 
+    if loan_req['Married'] == "Unmarried":
+        Married = 0
+    else:
+        Married = 1
+ 
+    if loan_req['Credit_History'] == "Unclear Debts":
+        Credit_History = 0
+    else:
+        Credit_History = 1  
+    
+    ApplicantIncome = loan_req['ApplicantIncome']
+    LoanAmount = loan_req['LoanAmount'] / 1000
+ 
+    # Making predictions 
+    prediction = clf.predict( 
+        [[Gender, Married, ApplicantIncome, LoanAmount, Credit_History]])
+     
+    if prediction == 0:
+        pred = 'Rejected'
+    else:
+        pred = 'Approved'
+
+    result = {
+        'loan_approval_status': pred
     }
 
-    """
-
-    # Pre-processing user input
-    query = json.loads(request.data)["query"]
-    context = read_text_file(json.loads(request.data)["policy_fname"])
-
-    # Making predictions
-    result = jsonify(model(question=query, context=context))
-    return result
+    return jsonify(result)
 
 
 @app.route('/ping', methods=['GET'])
